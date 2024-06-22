@@ -22,10 +22,16 @@ class Menu:
         '''
         self.play_rect = None
         self.ai_rect = None
+        self.level1_rect = None
+        self.level2_rect = None
         self.loadMenu()
 
     def changeType(self, type):
         self.type = type
+        self.play_rect = None
+        self.ai_rect = None
+        self.level1_rect = None
+        self.level2_rect = None
         self.loadMenu()
 
     def loadMenu(self):
@@ -35,6 +41,11 @@ class Menu:
             self.play_rect = pygame.Rect(50, 150, 100, 100)
             self.ai_rect = pygame.Rect(250, 150, 100, 100)
 
+        if self.type == "Level Menu":
+            self.image = pygame.image.load("data/images/menus/level_menu.jpg")
+            self.image = pygame.transform.scale(self.image, (VIRTUALSCREEN_WIDTH, VIRTUALSCREEN_HEIGHT))
+            self.level1_rect = pygame.Rect(50, 100, 100, 50)
+            self.level2_rect = pygame.Rect(250, 100, 100, 50)
 
         if self.type == "Pause Menu":
             self.image = pygame.image.load("data/images/menus/PauseMenu.png")
@@ -47,8 +58,15 @@ class Menu:
                 x, y = pygame.mouse.get_pos()
                 x = x / SCALING_FACTOR
                 y = y / SCALING_FACTOR
-                if self.play_rect.collidepoint(x, y):
+                if self.type == "Start Menu" and self.play_rect.collidepoint(x, y):
+                    #self.game.gameStateManager.switchGameState("Level 1")
+                    self.changeType("Level Menu")
+                elif self.type == "Level Menu" and self.level1_rect.collidepoint(x, y):
                     self.game.gameStateManager.switchGameState("Level 1")
+                    #self.game.setCurrentLevel(1)
+                elif self.type == "Level Menu" and self.level2_rect.collidepoint(x, y):
+                    self.game.gameStateManager.switchGameState("Level 2")
+                    #self.game.setCurrentLevel(2)
 
     def update(self):
         pass
@@ -66,8 +84,18 @@ class Menu:
         self.draw_text("WELCOME TO", pixel_font_bigger,  (255, 255, 255), surf, 200, 50)
         self.draw_text("MARIO", pixel_font_bigger, (255, 255, 255), surf, 200, 100)
 
+    def renderLevelMenu(self, surf):
+        pygame.draw.rect(surf, (255, 255, 255), self.level1_rect)
+        pygame.draw.rect(surf, (255, 255, 255), self.level2_rect)
+        self.draw_text("LVL 1", pixel_font, (200, 150, 50), surf, self.level1_rect.x + self.level1_rect.width // 2,
+                       self.level1_rect.y + self.level1_rect.height // 2)
+        self.draw_text("LVL 2", pixel_font, (200, 150, 50), surf, self.level2_rect.x + self.level2_rect.width // 2,
+                       self.level2_rect.y + self.level2_rect.height // 2)
+
     def render(self, surf):
         surf.blit(self.image, (0, 0))
         if self.type == "Start Menu":
             self.renderStartMenu(surf)
+        if self.type == "Level Menu":
+            self.renderLevelMenu(surf)
 

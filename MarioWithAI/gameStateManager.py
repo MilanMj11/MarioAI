@@ -24,3 +24,9 @@ class GameStateManager:
 
         if "Level" in gameState:
             self.game.advanceToNextLevel()
+
+        if "Level 1" == gameState:
+            self.game.setCurrentLevel(1)
+
+        if "Level 2" == gameState:
+            self.game.setCurrentLevel(2)

@@ -18,8 +18,6 @@ class GameAI(GameController):
         self.loadNewGame()
         self.Level1.init_Level()
 
-        self.action_space_size = 4  # Assuming 4 actions: left, right, jump, no-op
-
         # Track the last X position and time
         self.last_x_pos = self.player.pos[0]
         self.last_x_change_time = time.time()
@@ -40,7 +38,8 @@ class GameAI(GameController):
             'player_score': player.score,
             'player_coins': player.coins,
             'player_touched_finish': player.touched_finish,
-            'nearest_enemy_pos': player.getNearestEnemyPosition()
+            'nearest_enemy_pos': player.getNearestEnemyPosition(),
+            'distance_to_nearest_enemy': player.distanceToNearestEnemy()
         }
         return state
 
@@ -49,48 +48,34 @@ class GameAI(GameController):
         reward = 0
 
         # Reward for progress in the level
-        reward += player.pos[0] * 10
+        reward += player.pos[0] * (self.currentLevel.current_time / 100 + 1)
 
         # Reward for collecting coins
-        reward += player.coins * 1000
+        reward += player.coins * 10
 
         # Reward for killing enemies
-        reward += player.score * 10
+        reward += player.score
 
         # Reward for finishing the level
         if player.touched_finish:
             reward += 100000
 
-        # Penalty for losing lives
-        reward -= (3 - player.lives) * 5000
-
         # Penalty for falling off the screen
         if player.pos[1] > 250:
-            reward = -1000
+            reward = -5000
 
         # Penalty for not making progress
         if self.checkProgress(3):
-            reward -= 1000
+            reward -= 100
 
         # Penalty for dying:
         if player.lives < 3:
             print("OK")
             reward = -5000
 
-
-        '''
-        # Penalty if game ends due to inactivity
-        if time.time() - self.last_x_change_time > 5:
-            reward -= 1000
-
-        # Penalty if player hasn't made progress in a while
-        if time.time() - self.max_x_pos_time > 5:
-            reward -= 1000
-        '''
-
         return reward
 
-    def checkProgress(self, time_limit=5):
+    def checkProgress(self, time_limit=10):
 
         player = self.player
         current_time = time.time()

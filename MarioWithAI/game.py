@@ -104,6 +104,8 @@ class GameController:
     def restartGame(self):
         self.currentLevel.init_Level()
 
+    def setCurrentLevel(self, number=1):
+        pass
 
     def startGame(self):
         self.loadNewGame()

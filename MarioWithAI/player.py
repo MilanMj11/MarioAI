@@ -61,6 +61,9 @@ class Player(PhysicsEntity):  # Inherit from PhysicsEntity
                 nearest_enemy = enemy
         return nearest_enemy.pos
 
+    def distanceToNearestEnemy(self):
+        nearEnemy = self.getNearestEnemyPosition()
+        return abs(self.pos[0] - nearEnemy[0])
 
     def getTilesAroundPlayer(self):
         # return 4 booleans, if there is a tile around the player in each direction

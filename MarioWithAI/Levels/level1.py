@@ -10,16 +10,18 @@ from tiles import Tilemap
 
 
 class Level1(Level):
-    def __init__(self, game):
-        super().__init__(game)
-        self.init_Level()
+    def __init__(self, game, moves=None, newGame=False):
+        super().__init__(game, moves)
+        self.init_Level(newGame=newGame)
 
-    def init_Level(self):
-
+    def init_Level(self, newGame=False):
         self.current_time = 300
         self.aux_time = 100
 
-        self.game.player.loadPlayer()
+        if newGame:
+            self.game.player.loadNewPlayer()
+        else:
+            self.game.player.loadPlayer()
         self.enemiesList = []
         # super().init_Level()
 
@@ -47,8 +49,9 @@ class Level1(Level):
         ''' Spawning the enemies '''
 
         for i in range(self.nrOfEnemies):
-            enemy = Enemy(self.game, name=self.enemiesType[i][0], color=self.enemiesType[i][1], pos=self.enemiesPositions[i])
-            #enemy.setAnimationOffset((0, 16-24+1))
+            enemy = Enemy(self.game, name=self.enemiesType[i][0], color=self.enemiesType[i][1],
+                          pos=self.enemiesPositions[i])
+            # enemy.setAnimationOffset((0, 16-24+1))
             self.enemiesList.append(enemy)
 
         ''' Setam pozitia initiala a playerului '''
@@ -56,6 +59,12 @@ class Level1(Level):
 
         self.game.camera = [0, -60]
         self.game.render_camera = [0, 0]
+
+    def checkEventsGenetic(self, eventList):
+        super().checkEventsGenetic(eventList)
+        ''' Here we check for the event of ending the Level and going through to the next one '''
+        # if Something ->
+        # then self.game.gameStateManager.switchGameState("Level 2")
 
     def checkEvents(self, eventList):
         super().checkEvents(eventList)
